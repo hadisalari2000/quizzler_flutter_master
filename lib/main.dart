@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,6 +11,7 @@ class Quizzer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.grey.shade900,
         body: const SafeArea(
@@ -32,6 +34,13 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   List<Widget> scourList = [];
+  List<String> questions = [
+    'You can lead a cow down stairs but not up stairs.',
+    'Approximately one quarter of human bones are in the feet.',
+    'A slug\'s blood is green.'
+  ];
+
+  int indexOfQuestion = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +48,15 @@ class _QuizPageState extends State<QuizPage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const Expanded(
+        Expanded(
           flex: 5,
           child: Padding(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                indexOfQuestion==questions.length?" Quiz Exit":questions[indexOfQuestion] ,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 25.0,
                   color: Colors.white,
                 ),
@@ -71,10 +80,17 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 setState(() {
-                  scourList.add(const Icon(
-                    Icons.check,
-                    color: Colors.green,
-                  ));
+                  if (indexOfQuestion <= questions.length-1 ) {
+                    scourList.add(const Icon(
+                      Icons.check,
+                      color: Colors.green,
+                    ));
+                    indexOfQuestion++;
+                  }else{
+                    if (kDebugMode) {
+                      print('Quiz exit !!!');
+                    }
+                  }
                 });
                 //The user picked true.
               },
@@ -97,10 +113,17 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 setState(() {
-                  scourList.add(const Icon(
-                    Icons.close,
-                    color: Colors.red,
-                  ));
+                  if (indexOfQuestion <= questions.length-1) {
+                    scourList.add(const Icon(
+                      Icons.close,
+                      color: Colors.red,
+                    ));
+                    indexOfQuestion++;
+                  }else{
+                    if (kDebugMode) {
+                      print('Quiz exit !!!');
+                    }
+                  }
                 });
                 //The user picked false.
               },
