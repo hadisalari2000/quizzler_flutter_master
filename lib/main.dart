@@ -31,6 +31,8 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  List<Widget> scourList = [];
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -57,8 +59,9 @@ class _QuizPageState extends State<QuizPage> {
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: TextButton(
-              /*textColor: Colors.white,
-              color: Colors.green,*/
+              style: TextButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  textStyle: const TextStyle(color: Colors.white)),
               child: const Text(
                 'True',
                 style: TextStyle(
@@ -67,6 +70,12 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
+                setState(() {
+                  scourList.add(const Icon(
+                    Icons.check,
+                    color: Colors.green,
+                  ));
+                });
                 //The user picked true.
               },
             ),
@@ -76,7 +85,9 @@ class _QuizPageState extends State<QuizPage> {
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: TextButton(
-              /*color: Colors.red,*/
+              style: TextButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  textStyle: const TextStyle(color: Colors.white)),
               child: const Text(
                 'False',
                 style: TextStyle(
@@ -85,12 +96,20 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
+                setState(() {
+                  scourList.add(const Icon(
+                    Icons.close,
+                    color: Colors.red,
+                  ));
+                });
                 //The user picked false.
               },
             ),
           ),
         ),
-        //TODO: Add a Row here as your score keeper
+        Row(
+          children: scourList,
+        )
       ],
     );
   }
@@ -101,4 +120,3 @@ question1: 'You can lead a cow down stairs but not up stairs.', false,
 question2: 'Approximately one quarter of human bones are in the feet.', true,
 question3: 'A slug\'s blood is green.', true,
 */
-
