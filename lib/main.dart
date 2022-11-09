@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'question_bank.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 void main() {
   runApp(const Quizzer());
@@ -33,14 +34,9 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  List<Widget> scourList = [];
-  List<String> questions = [
-    'You can lead a cow down stairs but not up stairs.',
-    'Approximately one quarter of human bones are in the feet.',
-    'A slug\'s blood is green.'
-  ];
+  QuestionBank questionBank = QuestionBank();
 
-  int indexOfQuestion = 0;
+  List<Icon> scourList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +50,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                indexOfQuestion==questions.length?" Quiz Exit":questions[indexOfQuestion] ,
+                "${questionBank.getCurrentQuestionNumber()}. ${questionBank.getCurrentQuestionText()}",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 25.0,
@@ -80,19 +76,13 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 setState(() {
-                  if (indexOfQuestion <= questions.length-1 ) {
-                    scourList.add(const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    ));
-                    indexOfQuestion++;
-                  }else{
-                    if (kDebugMode) {
-                      print('Quiz exit !!!');
-                    }
+                  if (questionBank.isFinished()) {
+                    alert(context, "Questions Exited!!!");
+                  } else {
+                    checkUserAnswer(true);
+                    questionBank.nextQuestion();
                   }
                 });
-                //The user picked true.
               },
             ),
           ),
@@ -113,19 +103,13 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 setState(() {
-                  if (indexOfQuestion <= questions.length-1) {
-                    scourList.add(const Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ));
-                    indexOfQuestion++;
-                  }else{
-                    if (kDebugMode) {
-                      print('Quiz exit !!!');
-                    }
+                  if (questionBank.isFinished()) {
+                    alert(context, "Questions Exited!!!");
+                  } else {
+                    checkUserAnswer(false);
+                    questionBank.nextQuestion();
                   }
                 });
-                //The user picked false.
               },
             ),
           ),
@@ -136,10 +120,55 @@ class _QuizPageState extends State<QuizPage> {
       ],
     );
   }
-}
 
-/*
-question1: 'You can lead a cow down stairs but not up stairs.', false,
-question2: 'Approximately one quarter of human bones are in the feet.', true,
-question3: 'A slug\'s blood is green.', true,
-*/
+  void checkUserAnswer(bool userAnswer) {
+    if (questionBank.getCurrentQuestionAnswer() == userAnswer) {
+      scourList.add(const Icon(
+        Icons.check,
+        color: Colors.green,
+      ));
+    } else {
+      scourList.add(const Icon(
+        Icons.close,
+        color: Colors.red,
+      ));
+    }
+  }
+
+  void alert(BuildContext context, String description) {
+    /*Alert(
+      context: context,
+      title: "WARNING",
+      desc: description,
+    ).show();*/
+
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "RFLUTTER ALERT",
+      desc: "Flutter is more awesome with RFlutter Alert.",
+      buttons: [
+        DialogButton(
+          onPressed: () {
+            restartQuiz();
+            Navigator.pop(context);
+          },
+          /*onPressed: () => restartQuiz(),*/
+          width: 120,
+          child: const Text(
+            "Restart",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+        )
+      ],
+    ).show();
+
+  }
+
+  restartQuiz() {
+    setState(() {
+      questionBank.restart();
+      scourList = [];
+    });
+  }
+}
